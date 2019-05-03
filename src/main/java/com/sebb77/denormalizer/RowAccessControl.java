@@ -1,8 +1,5 @@
 package com.sebb77.denormalizer;
 
-import lombok.ToString;
-
-@ToString(of = "current")
 class RowAccessControl {
 
 	private int current;

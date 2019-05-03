@@ -1,11 +1,14 @@
 package com.sebb77.denormalizer;
 
+import static org.junit.Assert.assertThat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import com.github.javafaker.Faker;
@@ -17,11 +20,7 @@ public class DenormalizerImplTest {
 
 	@Test
 	public void denormalizeObject() throws Exception {
-		// Create class structure to convert into table.
-		// There is no need that the class is a serializable class. Any class will work,
-		// however only lists are being checked for the moment.
-		// If other types of lists needs to be checked, fix the getType function and the
-		// relevant loops for the lists.
+
 		Test1 c1 = new Test1();
 		c1.setA(11);
 		c1.setB("12");
@@ -31,26 +30,9 @@ public class DenormalizerImplTest {
 				new Test2[] { new Test2(31, "32", new ArrayList<String>(Arrays.asList(new String[] { "331", "332" }))),
 						new Test2(41, "42") })));
 
-		long t = System.currentTimeMillis();
-		// convert class into a guava table
 		Table<Integer, String, Object> m = new DenormalizerImpl().denormalize(c1);
-		System.out.println("Total Time: " + (System.currentTimeMillis() - t) + "ms");
 
-		// print result of conversion
-		System.out.print("\t");
-		for (String c : m.columnKeySet())
-			System.out.print(c + "\t");
-		System.out.println();
-
-		for (Integer r : m.rowKeySet()) {
-			System.out.print(r + 1 + ":\t");
-			for (String c : m.columnKeySet()) {
-				Object x = m.get(r, c);
-				x = x == null ? "~" : x;
-				System.out.print(x + "\t");
-			}
-			System.out.println();
-		}
+		printTableResult(m);
 	}
 
 	@Test
@@ -67,24 +49,24 @@ public class DenormalizerImplTest {
 		Map<String, Object> fundo1Gestor1 = new LinkedHashMap<>();
 		fundo1Gestor1.put("codigo", "A123");
 		fundo1Gestor1.put("nome", "Fundo de Investimento Abelha");
-		fundo1Gestor1.put("valor_cota", faker.number().randomNumber() / 100);
-		fundo1Gestor1.put("patrimonio_liquido", faker.number().randomNumber() / 100);
+		fundo1Gestor1.put("valor_cota", faker.number().randomDouble(2, 0, 100000));
+		fundo1Gestor1.put("patrimonio_liquido", faker.number().randomDouble(2, 0, 1000000));
 		fundo1Gestor1.put("data_inicio", faker.date().birthday(1, 15));
 		fundosGestor1.add(fundo1Gestor1);
 
 		Map<String, Object> fundo2Gestor1 = new LinkedHashMap<>();
 		fundo2Gestor1.put("codigo", "B456");
 		fundo2Gestor1.put("nome", "Fundo de Investimento Batata");
-		fundo2Gestor1.put("valor_cota", faker.number().randomNumber() / 100);
-		fundo2Gestor1.put("patrimonio_liquido", faker.number().randomNumber() / 100);
+		fundo2Gestor1.put("valor_cota", faker.number().randomDouble(2, 0, 100000));
+		fundo2Gestor1.put("patrimonio_liquido", faker.number().randomDouble(2, 0, 1000000));
 		fundo2Gestor1.put("data_inicio", faker.date().birthday(1, 15));
 		fundosGestor1.add(fundo2Gestor1);
 
 		Map<String, Object> fundo3Gestor1 = new LinkedHashMap<>();
 		fundo3Gestor1.put("codigo", "C789");
 		fundo3Gestor1.put("nome", "Fundo de Investimento Casa");
-		fundo3Gestor1.put("valor_cota", faker.number().randomNumber() / 100);
-		fundo3Gestor1.put("patrimonio_liquido", faker.number().randomNumber() / 100);
+		fundo3Gestor1.put("valor_cota", faker.number().randomDouble(2, 0, 100000));
+		fundo3Gestor1.put("patrimonio_liquido", faker.number().randomDouble(2, 0, 1000000));
 		fundo3Gestor1.put("data_inicio", faker.date().birthday(1, 15));
 		fundosGestor1.add(fundo3Gestor1);
 
@@ -101,16 +83,16 @@ public class DenormalizerImplTest {
 		Map<String, Object> fundo1Gestor2 = new LinkedHashMap<>();
 		fundo1Gestor2.put("codigo", "D147");
 		fundo1Gestor2.put("nome", "Fundo de Investimento Dados");
-		fundo1Gestor2.put("valor_cota", faker.number().randomNumber() / 100);
-		fundo1Gestor2.put("patrimonio_liquido", faker.number().randomNumber() / 100);
+		fundo1Gestor2.put("valor_cota", faker.number().randomDouble(2, 0, 100000));
+		fundo1Gestor2.put("patrimonio_liquido", faker.number().randomDouble(2, 0, 1000000));
 		fundo1Gestor2.put("data_inicio", faker.date().birthday(1, 15));
 		fundosGestor2.add(fundo1Gestor2);
 
 		Map<String, Object> fundo2Gestor2 = new LinkedHashMap<>();
 		fundo2Gestor2.put("codigo", "E258");
 		fundo2Gestor2.put("nome", "Fundo de Investimento Escola");
-		fundo2Gestor2.put("valor_cota", faker.number().randomNumber() / 100);
-		fundo2Gestor2.put("patrimonio_liquido", faker.number().randomNumber() / 100);
+		fundo2Gestor2.put("valor_cota", faker.number().randomDouble(2, 0, 100000));
+		fundo2Gestor2.put("patrimonio_liquido", faker.number().randomDouble(2, 0, 1000000));
 		fundo2Gestor2.put("data_inicio", faker.date().birthday(1, 15));
 		fundosGestor2.add(fundo2Gestor2);
 
@@ -120,11 +102,14 @@ public class DenormalizerImplTest {
 		Map<String, Object> map = new LinkedHashMap<>();
 		map.put("allGestores", gestores);
 
-		long t = System.currentTimeMillis();
-		// convert class into a guava table
 		Table<Integer, String, Object> m = new DenormalizerImpl().denormalize(map);
-		System.out.println("Total Time: " + (System.currentTimeMillis() - t) + "ms");
 
+		assertThat(m.rowKeySet().size(), Matchers.equalTo(12));
+
+		printTableResult(m);
+	}
+
+	private void printTableResult(Table<Integer, String, Object> m) {
 		// print result of conversion
 		System.out.print("\t");
 		for (String c : m.columnKeySet())

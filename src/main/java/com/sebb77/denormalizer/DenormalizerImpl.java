@@ -19,8 +19,11 @@ class DenormalizerImpl implements Denormalizer {
 
 	@Override
 	public Table<Integer, String, Object> denormalize(Object obj) throws Exception {
-		Table<Integer, String, Object> data = TreeBasedTable.create();
-		return denormalize(data, new RowAccessControl(), "", obj);
+		long t = System.currentTimeMillis();
+		Table<Integer, String, Object> denormalized = denormalize(TreeBasedTable.create(), new RowAccessControl(), "",
+				obj);
+		log.debug("Denormalization Total Time: {} ms", (System.currentTimeMillis() - t));
+		return denormalized;
 	}
 
 	private Table<Integer, String, Object> denormalize(Table<Integer, String, Object> data, RowAccessControl row,
@@ -59,7 +62,7 @@ class DenormalizerImpl implements Denormalizer {
 					continue;
 				}
 
-				String name = prefix + f.getName();
+				String name = prefix + PREFIX_SEPARATOR + f.getName();
 				data.putAll(denormalize(data, row, name, val));
 			}
 		} else {
