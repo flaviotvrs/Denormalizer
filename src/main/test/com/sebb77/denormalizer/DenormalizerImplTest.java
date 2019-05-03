@@ -11,7 +11,7 @@ import org.junit.Test;
 import com.github.javafaker.Faker;
 import com.google.common.collect.Table;
 
-public class DenormalizerTest {
+public class DenormalizerImplTest {
 
 	private static Faker faker = Faker.instance();
 
@@ -33,7 +33,7 @@ public class DenormalizerTest {
 
 		long t = System.currentTimeMillis();
 		// convert class into a guava table
-		Table<Integer, String, Object> m = Denormalizer.denormalize(c1);
+		Table<Integer, String, Object> m = new DenormalizerImpl().denormalize(c1);
 		System.out.println("Total Time: " + (System.currentTimeMillis() - t) + "ms");
 
 		// print result of conversion
@@ -122,7 +122,7 @@ public class DenormalizerTest {
 
 		long t = System.currentTimeMillis();
 		// convert class into a guava table
-		Table<Integer, String, Object> m = Denormalizer.denormalize(map);
+		Table<Integer, String, Object> m = new DenormalizerImpl().denormalize(map);
 		System.out.println("Total Time: " + (System.currentTimeMillis() - t) + "ms");
 
 		// print result of conversion
